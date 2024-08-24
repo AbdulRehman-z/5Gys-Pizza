@@ -1,0 +1,20 @@
+import { getAddress } from "../../services/apiGeocoding";
+
+function getPosition() {
+  return new Promise(function (resolve, reject) {
+    navigator.geolocation.getCurrentPosition(resolve, reject);
+  });
+}
+
+async function fetchAddress() {
+  const positionObj = await getPosition();
+  const position = {
+    latitude: (positionObj as GeolocationPosition).coords.latitude,
+    longitude: (positionObj as GeolocationPosition).coords.longitude,
+  };
+
+  const addressObj = await getAddress(position);
+  const address = `${addressObj?.locality}, ${addressObj?.city} ${addressObj?.postcode}, ${addressObj?.countryName}`;
+
+  return { position, address };
+}
