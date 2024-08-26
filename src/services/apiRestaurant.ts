@@ -1,3 +1,6 @@
+import { newOrderSchema, orderSchema } from "../schema";
+import { menuSchema } from "../schema";
+
 const API_URL = "https://react-fast-pizza-api.onrender.com/api";
 
 export async function getMenu() {
@@ -7,15 +10,22 @@ export async function getMenu() {
   if (!res.ok) throw Error("Failed getting menu");
 
   const { data } = await res.json();
-  return data;
+  const validateData = menuSchema.safeParse(data);
+  console.log(validateData.data);
+
+  if (!validateData.success) throw new Error("Failed parsing menu data");
+  return validateData.data;
 }
 
-export async function getOrder(id: number) {
+export async function getOrder(id: string) {
   const res = await fetch(`${API_URL}/order/${id}`);
   if (!res.ok) throw Error(`Couldn't find order #${id}`);
 
   const { data } = await res.json();
-  return data;
+  const validateData = orderSchema.safeParse(data);
+
+  if (!validateData.success) alert(validateData.error);
+  return validateData.data;
 }
 
 export async function createOrder(newOrder: any) {
@@ -30,9 +40,14 @@ export async function createOrder(newOrder: any) {
 
     if (!res.ok) throw Error();
     const { data } = await res.json();
-    return data;
-  } catch {
-    throw Error("Failed creating your order");
+    const validateData = newOrderSchema.safeParse(data);
+    console.log(validateData.data);
+
+    if (!validateData.success) alert(validateData.error);
+
+    return validateData.data;
+  } catch (error) {
+    throw Error(error);
   }
 }
 
