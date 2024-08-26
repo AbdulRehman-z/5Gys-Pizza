@@ -41,9 +41,7 @@ export async function createOrder(newOrder: any) {
     if (!res.ok) throw Error();
     const { data } = await res.json();
     const validateData = newOrderSchema.safeParse(data);
-    console.log(validateData.data);
-
-    if (!validateData.success) alert(validateData.error);
+    if (!validateData.success) throw alert(validateData.error);
 
     return validateData.data;
   } catch (error) {
