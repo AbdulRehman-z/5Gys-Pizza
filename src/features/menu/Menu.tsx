@@ -1,22 +1,22 @@
 import { useLoaderData } from "react-router-dom";
 import { getMenu } from "../../services/apiRestaurant";
 import { type MenuType } from "../../schema";
+import MenuItem from "./MenuItem";
+import { useSelector } from "react-redux";
+import { RootState } from "@reduxjs/toolkit/query";
+import { RootStateType } from "../../store";
 
 function Menu() {
   const menu = useLoaderData() as [MenuType];
-  console.log(menu);
+  const username = useSelector((state: RootStateType) => state.user.username);
+  console.log(username);
 
   return (
-    <div>
+    <ul className="divide-y divide-stone-200">
       {menu.map((item) => (
-        <div key={item.id}>
-          <h1>{item.name}</h1>
-          <img src={item.imageUrl} alt={item.name} />
-          <p>{item.unitPrice}</p>
-          <p>{item.soldOut}</p>
-        </div>
+        <MenuItem key={item.id} pizza={item} />
       ))}
-    </div>
+    </ul>
   );
 }
 
