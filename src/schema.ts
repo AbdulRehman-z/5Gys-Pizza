@@ -1,4 +1,5 @@
 import { z } from "zod";
+import Cart from "./features/cart/Cart";
 
 //////////////////////////////////////
 /////////////////////////////////////
@@ -52,6 +53,8 @@ const newCartItem = z.object({
   unitPrice: z.number().positive(),
   totalPrice: z.number().positive(),
 });
+
+export type CartItemType = z.infer<typeof newCartItem>;
 
 export const newOrderSchema = z.object({
   customer: z.string(),
