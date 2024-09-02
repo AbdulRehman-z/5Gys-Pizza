@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { RootStateType } from "../../store";
 
 const initialState = {
   username: undefined,
@@ -13,6 +14,8 @@ const userSlice = createSlice({
     },
   },
 });
+
+export const getUsername = (state: RootStateType) => state.user.username;
 
 export const { updateUsername } = userSlice.actions;
 export default userSlice.reducer;
