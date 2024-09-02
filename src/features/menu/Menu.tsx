@@ -3,7 +3,6 @@ import { getMenu } from "../../services/apiRestaurant";
 import { type MenuType } from "../../schema";
 import MenuItem from "./MenuItem";
 import { useSelector } from "react-redux";
-import { RootState } from "@reduxjs/toolkit/query";
 import { RootStateType } from "../../store";
 
 function Menu() {
