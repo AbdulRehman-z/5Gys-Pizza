@@ -1,3 +1,4 @@
+import { FormEvent } from "react";
 import { Link } from "react-router-dom";
 
 type ButtonProps = {
@@ -5,7 +6,7 @@ type ButtonProps = {
   children: React.ReactNode;
   to?: string;
   disabled?: boolean;
-  onClick?: () => void;
+  onClick?: (e: FormEvent) => void;
 };
 
 export const Button = ({
