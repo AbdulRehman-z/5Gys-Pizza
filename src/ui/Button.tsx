@@ -17,7 +17,7 @@ export const Button = ({
   onClick,
 }: ButtonProps) => {
   const base =
-    "bg-yellow-400 rounded-full text-stone-50 font-semibold focus:outline-none focus:ring focus:ring-yellow-400 focus:ring-offset-1 transition-all duration-150 disabled:cursor-not-allowed";
+    "text-stone-700 bg-yellow-400 rounded-full text-stone-50 font-semibold focus:outline-none focus:ring focus:ring-yellow-400 focus:ring-offset-1 transition-all duration-150 disabled:cursor-not-allowed";
 
   const buttonVariantStyles = {
     primary: base + " px-4 py-3 md:px-6 md:py-4",
