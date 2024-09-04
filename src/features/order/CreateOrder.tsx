@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { clearCart, getCart, getTotalPrice } from "../cart/cartSlice";
 import EmptyCart from "../cart/EmptyCart";
 import { fetchAddress, getUsername } from "../user/userSlice";
-import { AppDispatchType, store } from "../../store";
+import { AppDispatchType, RootStateType, store } from "../../store";
 
 // https://uibakery.io/regex-library/phone-number
 const isValidPhone = (str: string) =>
@@ -50,11 +50,16 @@ function CreateOrder() {
   const navigation = useNavigation();
   const username = useSelector(getUsername);
   const cart = useSelector(getCart);
+  const { address, error, position, status } = useSelector(
+    (state: RootStateType) => state.user,
+  );
   const dispatch = useDispatch<AppDispatchType>();
   const cartPrice = useSelector(getTotalPrice);
   const priorityPrice = withPriority ? cartPrice * 0.2 : 0;
   const totalPrice = cartPrice + priorityPrice;
   const isSubmitting = navigation.state === "submitting";
+  const isLoadingAddress = status === "loading";
+  const isError = status === "error";
 
   if (!cart.length) return <EmptyCart />;
 
@@ -63,14 +68,6 @@ function CreateOrder() {
       <h2 className="mb-8 text-xl font-semibold">Ready to order? Let's go!</h2>
 
       <Form method="POST">
-        <Button
-          onClick={(e: FormEvent) => {
-            e.preventDefault();
-            dispatch(fetchAddress());
-          }}
-        >
-          Location
-        </Button>
         <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
           <label defaultValue={username} className="sm:basis-40">
             First Name
@@ -90,16 +87,38 @@ function CreateOrder() {
           </div>
         </div>
 
-        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
+        <div className="relative mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
           <label className="sm:basis-40">Address</label>
           <div className="grow">
             <input
+              disabled={isLoadingAddress}
+              defaultValue={address}
               className="input w-full"
               type="text"
               name="address"
               required
             />
+            {isError && (
+              <p className="mt-2 rounded-md bg-red-100 p-2 text-xs text-red-700">
+                {error}
+              </p>
+            )}
           </div>
+
+          {!position.latitude && !position.longitude && (
+            <span className="absolute right-[3px] top-[3px] z-50 md:right-[5px] md:top-[5px]">
+              <Button
+                variant="small"
+                disabled={isLoadingAddress}
+                onClick={(e: FormEvent) => {
+                  e.preventDefault();
+                  dispatch(fetchAddress());
+                }}
+              >
+                {isLoadingAddress ? "loading..." : "Get location"}
+              </Button>
+            </span>
+          )}
         </div>
 
         <div className="mb-12 flex items-center gap-5">
@@ -111,6 +130,16 @@ function CreateOrder() {
             value={withPriority.toString()}
             onChange={(e) => setWithPriority(e.target.checked)}
           />
+          <input
+            type="hidden"
+            name="position"
+            value={
+              position.longitude && position.latitude
+                ? `${position.latitude},${position.longitude}`
+                : ""
+            }
+          />
+
           <label htmlFor="priority" className="font-medium">
             Want to yo give your order priority?
           </label>
@@ -133,7 +162,6 @@ export async function createOrderAction({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
 
-  // console.log(data);
   const order = {
     ...data,
     cart: JSON.parse(data.cart),
