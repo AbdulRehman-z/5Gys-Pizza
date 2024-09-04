@@ -21,9 +21,15 @@ export const fetchAddress = createAsyncThunk("user/fetchAddress", async () => {
   return { position, address };
 });
 
-// type InitialStateType = {};
+type InitialStateType = {
+  username: string;
+  status: string;
+  position: Record<number, number>;
+  address: string;
+  error: string;
+};
 
-const initialState = {
+const initialState: InitialStateType = {
   username: "",
   status: "idle",
   position: {},
